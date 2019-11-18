@@ -57,7 +57,7 @@ def train_nn_classification_model(
   my_optimizer = tf.contrib.estimator.clip_gradients_by_norm(my_optimizer, 5.0)
   classifier = tf.estimator.DNNClassifier(
       feature_columns=construct_feature_columns(training_examples),
-      n_classes=2,
+      n_classes=3,
       hidden_units=hidden_units,
       optimizer=my_optimizer,
       config=tf.contrib.learn.RunConfig(keep_checkpoint_max=1),
@@ -93,13 +93,13 @@ def train_nn_classification_model(
     training_predictions = list(classifier.predict(input_fn=predict_training_input_fn))
     training_probabilities = np.array([item['probabilities'] for item in training_predictions])
     training_pred_class_id = np.array([item['class_ids'][0] for item in training_predictions])
-    training_pred_one_hot = tf.keras.utils.to_categorical(training_pred_class_id, 2)
+    training_pred_one_hot = tf.keras.utils.to_categorical(training_pred_class_id, 3)
     #training_predictions = np.around(training_predictions)
     
     validation_predictions = list(classifier.predict(input_fn=predict_validation_input_fn))
     validation_probabilities = np.array([item['probabilities'] for item in validation_predictions])    
     validation_pred_class_id = np.array([item['class_ids'][0] for item in validation_predictions])
-    validation_pred_one_hot = tf.keras.utils.to_categorical(validation_pred_class_id, 2)
+    validation_pred_one_hot = tf.keras.utils.to_categorical(validation_pred_class_id, 3)
     #validation_predictions = np.around(validation_predictions)
     
     # Compute training and validation errors.

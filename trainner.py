@@ -140,8 +140,8 @@ if __name__ == '__main__':
   gene_df = gene_df.reindex(np.random.permutation(gene_df.index))
   training_examples = gene_df.drop('Label', axis=1).head(170)
   training_targets = gene_df['Label'].head(170)
-  validation_examples = gene_df.drop('Label', axis=1).tail(48)
-  validation_targets = gene_df['Label'].tail(48)
+  validation_examples = gene_df.drop('Label', axis=1).tail(53)
+  validation_targets = gene_df['Label'].tail(53)
   classifier = train_nn_classification_model(
       learning_rate=0.0001,
       l1_regularization_strength=0.1,

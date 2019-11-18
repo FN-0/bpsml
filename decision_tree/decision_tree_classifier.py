@@ -29,19 +29,23 @@ def main():
     f = tree.export_graphviz(clf, out_file=f)
 
   ''''' 系数反映每个特征的影响力。越大表示该特征在分类中起到的作用越大 '''  
+  print('系数反映每个特征的影响力。越大表示该特征在分类中起到的作用越大')
   print(clf.feature_importances_)
+  input()
 
   '''''测试结果的打印'''  
-  answer = clf.predict(x_train)  
-  print(x_train)  
-  print(answer)  
-  print(y_train)  
-  print(np.mean(answer == y_train))
+  print('测试结果的打印')
+  answer = clf.predict(x_train)
+  print('x_train: ', x_train)
+  print('answer: ', answer)
+  print('y_train: ', y_train)
+  print('np.mean(answer == y_train)', np.mean(answer == y_train))
+  input()
 
   '''''准确率与召回率'''  
   #precision, recall, thresholds = precision_recall_curve(y_train, clf.predict(x_train))  
-  answer = clf.predict_proba(x.to_numpy)[:,1]  
-  print(classification_report(y, answer, target_names = ['yes', 'no'])) 
+  #answer = clf.predict_proba(x.to_numpy)[:,1]  
+  #print(classification_report(y, answer, target_names = ['yes', 'no'])) 
 
 if __name__ == "__main__":
   main()

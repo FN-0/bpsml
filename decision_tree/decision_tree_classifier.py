@@ -37,16 +37,16 @@ def main():
   '''''测试结果的打印'''  
   print('测试结果的打印')
   answer = clf.predict(x_train)
-  print('x_train: ', x_train)
-  print('answer: ', answer)
-  print('y_train: ', y_train)
-  print('np.mean(answer == y_train)', np.mean(answer == y_train))
+  print('np.mean(answer == y_train): \n', np.mean(answer == y_train))
   input()
 
   '''''准确率与召回率'''  
   #precision, recall, thresholds = precision_recall_curve(y_train, clf.predict(x_train))  
   #answer = clf.predict_proba(x.to_numpy)[:,1]  
   #print(classification_report(y, answer, target_names = ['yes', 'no']))
+  answer = clf.predict(x_test)
+  print('np.mean(answer == y_test): \n', np.mean(answer == y_test))
+  
   print(clf.score(x_train, y_train))  # 精度
   print('训练集准确率：', accuracy_score(y_train, clf.predict(x_train)))
   print(clf.score(x_test, y_test))

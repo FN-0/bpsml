@@ -11,10 +11,10 @@ from sklearn.metrics import classification_report
 from sklearn.preprocessing import label_binarize
 
 def main():
-  df = pd.read_csv(sys.argv[1])
-  x = df.iloc[1:, 1:]
-  y = df.iloc[1:, 0]
-  y = label_binarize(y, classes=[1, 0, -1])
+  df = pd.read_csv(sys.argv[1], header=0)
+  x = df.iloc[0:, 0:]
+  y = df.iloc[0:, 0]
+  y = label_binarize(y, classes=[0, 1, 2])
 
   ''''' 拆分训练数据与测试数据 ''' 
   x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2)
@@ -39,7 +39,7 @@ def main():
   print(np.mean(answer == y_train))
 
   '''''准确率与召回率'''  
-  precision, recall, thresholds = precision_recall_curve(y_train, clf.predict(x_train))  
+  #precision, recall, thresholds = precision_recall_curve(y_train, clf.predict(x_train))  
   answer = clf.predict_proba(x)[:,1]  
   print(classification_report(y, answer, target_names = ['yes', 'no'])) 
 

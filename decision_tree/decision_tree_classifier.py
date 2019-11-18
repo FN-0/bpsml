@@ -7,8 +7,8 @@ import pandas as pd
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve  
-from sklearn.metrics import classification_report 
-from sklearn.preprocessing import label_binarize
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
 
 def main():
   df = pd.read_csv(sys.argv[1], header=0)
@@ -45,7 +45,11 @@ def main():
   '''''准确率与召回率'''  
   #precision, recall, thresholds = precision_recall_curve(y_train, clf.predict(x_train))  
   #answer = clf.predict_proba(x.to_numpy)[:,1]  
-  #print(classification_report(y, answer, target_names = ['yes', 'no'])) 
+  #print(classification_report(y, answer, target_names = ['yes', 'no']))
+  print(clf.score(x_train, y_train))  # 精度
+  print('训练集准确率：', accuracy_score(y_train, clf.predict(x_train)))
+  print(clf.score(x_test, y_test))
+  print('测试集准确率：', accuracy_score(y_test, clf.predict(x_test)))
 
 if __name__ == "__main__":
   main()

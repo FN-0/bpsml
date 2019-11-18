@@ -139,9 +139,9 @@ if __name__ == '__main__':
   gene_df = pd.read_csv('ready2train/'+sys.argv[1]+'.csv', header=0)
   gene_df = gene_df.reindex(np.random.permutation(gene_df.index))
   training_examples = gene_df.drop('Label', axis=1).head(170)
-  training_targets = pd.to_numeric(gene_df['Label'].head(170), downcast='signed')
+  training_targets = pd.to_numeric(gene_df['Label'].head(170), downcast='interger')
   validation_examples = gene_df.drop('Label', axis=1).tail(53)
-  validation_targets = pd.to_numeric(gene_df['Label'].tail(53), downcast='signed')
+  validation_targets = pd.to_numeric(gene_df['Label'].tail(53), downcast='interger')
   classifier = train_nn_classification_model(
       learning_rate=0.0001,
       l1_regularization_strength=0.1,

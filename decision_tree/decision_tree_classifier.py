@@ -8,11 +8,13 @@ from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve  
 from sklearn.metrics import classification_report 
+from sklearn.preprocessing import label_binarize
 
 def main():
   df = pd.read_csv(sys.argv[1])
   x = df.iloc[1:, 1:]
-  y = df.iloc[0, 1:]
+  y = df.iloc[1:, 0]
+  y = label_binarize(y, classes=[1, 0, -1])
 
   ''''' 拆分训练数据与测试数据 ''' 
   x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2)

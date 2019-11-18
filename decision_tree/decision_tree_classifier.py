@@ -7,8 +7,9 @@ import pandas as pd
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve  
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report 
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import label_binarize
 
 def main():
   df = pd.read_csv(sys.argv[1], header=0)

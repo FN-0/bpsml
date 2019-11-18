@@ -40,7 +40,7 @@ def main():
 
   '''''准确率与召回率'''  
   #precision, recall, thresholds = precision_recall_curve(y_train, clf.predict(x_train))  
-  answer = clf.predict_proba(x)[:,1]  
+  answer = clf.predict_proba(x.to_numpy)[:,1]  
   print(classification_report(y, answer, target_names = ['yes', 'no'])) 
 
 if __name__ == "__main__":

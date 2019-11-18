@@ -4,6 +4,7 @@
 import sys
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn import tree
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve  
@@ -32,7 +33,9 @@ def main():
   ''''' 系数反映每个特征的影响力。越大表示该特征在分类中起到的作用越大 '''  
   print('系数反映每个特征的影响力。越大表示该特征在分类中起到的作用越大')
   print(clf.feature_importances_)
-  input()
+  for im in clf.feature_importances_:
+    print(im)
+    input()
 
   '''''测试结果的打印'''  
   print('测试结果的打印')

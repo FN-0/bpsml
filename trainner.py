@@ -128,14 +128,14 @@ def train_boosted_trees_model(
   plt.close()
 
   # Output a graph of loss metrics over periods.
-  fpr, tpr, _ = roc_curve(validation_targets, probs)
-  plt.plot(fpr, tpr)
-  plt.title('ROC curve')
-  plt.xlabel('false positive rate')
-  plt.ylabel('true positive rate')
-  plt.xlim(0,)
-  plt.ylim(0,)
-  plt.savefig(os.path.join(models_path, "roc.png"))
+  #fpr, tpr, _ = roc_curve(validation_targets, probs)
+  #plt.plot(fpr, tpr)
+  #plt.title('ROC curve')
+  #plt.xlabel('false positive rate')
+  #plt.ylabel('true positive rate')
+  #plt.xlim(0,)
+  #plt.ylim(0,)
+  #plt.savefig(os.path.join(models_path, "roc.png"))
   
   feature_spec = tf.feature_column.make_parse_example_spec(construct_feature_columns(training_examples))
   print(feature_spec)

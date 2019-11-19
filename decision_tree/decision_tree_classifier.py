@@ -22,7 +22,12 @@ def main():
   x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2)
 
   ''''' 使用信息熵作为划分标准，对决策树进行训练 '''  
-  clf = tree.DecisionTreeClassifier(criterion='entropy')
+  clf = tree.DecisionTreeClassifier(
+          max_depth = 10,
+          min_samples_split = 5,
+          min_weight_fraction_leaf = 0.1,
+          min_impurity_decrease = 0.1
+        )
   print(clf)
   clf.fit(x_train, y_train)
 
@@ -33,9 +38,6 @@ def main():
   ''''' 系数反映每个特征的影响力。越大表示该特征在分类中起到的作用越大 '''  
   print('系数反映每个特征的影响力。越大表示该特征在分类中起到的作用越大')
   print(clf.feature_importances_)
-  for im in clf.feature_importances_:
-    print(im)
-    input()
 
   '''''测试结果的打印'''  
   print('测试结果的打印')

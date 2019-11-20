@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 
 def main():
   df = pd.read_csv(sys.argv[1], header=0)
-  x = df.iloc[0:, 0:].to_numpy()
+  x = df.iloc[0:, 1:].to_numpy()
   y = df.iloc[0:, 0].to_numpy()
 
   """ 拆分训练数据与测试数据 """

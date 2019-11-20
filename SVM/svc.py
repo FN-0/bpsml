@@ -13,14 +13,15 @@ from sklearn.model_selection import train_test_split
 
 def main():
   df = pd.read_csv(sys.argv[1], header=0)
-  x = df.iloc[0:, 0:].to_numpy()
-  y = df.iloc[0:, 0].to_numpy()
+  x = df.iloc[0:184, 1:].to_numpy()
+  y = df.iloc[0:184, 0].to_numpy()
 
   """ 拆分训练数据与测试数据 """
   ss = ShuffleSplit(n_splits=4, test_size=0.3)
   for train_index, test_index in ss.split(x):
     x_train, y_train = x[train_index], y[train_index]
     x_test, y_test = x[test_index], y[test_index]
+    print(x_train)
     lsvc = svm.SVC(kernel='linear', C=1).fit(x_train, y_train)
   
     """ 输出分类结果 """

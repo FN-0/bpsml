@@ -5,7 +5,6 @@ import sys
 import pickle
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import KFold, cross_val_score, ShuffleSplit
@@ -42,8 +41,6 @@ def main():
       pass
     else:
       return
-    scores = cross_val_score(lsvc, x, y, cv=5)
-    print(scores)
 
 if __name__ == "__main__":
   main()

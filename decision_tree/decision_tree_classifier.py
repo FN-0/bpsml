@@ -14,8 +14,8 @@ from sklearn.preprocessing import label_binarize
 
 def main():
   df = pd.read_csv(sys.argv[1], header=0)
-  x = df.iloc[0:, 0:]
-  y = df.iloc[0:, 0]
+  x = df.iloc[0:184, 1:]
+  y = df.iloc[0:184, 0]
   y = label_binarize(y, classes=[0, 1, 2])
 
   ''''' 拆分训练数据与测试数据 ''' 

@@ -5,8 +5,7 @@ import sys
 import pickle
 import numpy as np
 import pandas as pd
-from sklearn import svm
-from sklearn.svm import LinearSVC
+from sklearn import neural_network
 from sklearn.model_selection import KFold, cross_val_score, ShuffleSplit
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -17,18 +16,18 @@ def main():
   y = df.iloc[0:184, 0].to_numpy()
 
   """ 拆分训练数据与测试数据 """
-  ss = ShuffleSplit(n_splits=4, test_size=0.35)
+  ss = ShuffleSplit(n_splits=4, test_size=0.4)
   for train_index, test_index in ss.split(x):
     x_train, y_train = x[train_index], y[train_index]
     x_test, y_test = x[test_index], y[test_index]
     print(x_train)
-    lsvc = svm.SVC(kernel='linear', C=1).fit(x_train, y_train)
+    lsvc = neural_network.MLPClassifier().fit(x_train, y_train)
   
     """ 输出分类结果 """
     y_predict = lsvc.predict(x_test)
     score = lsvc.score(x_test, y_test)
     cr = classification_report(y_test, y_predict)
-    print('The Accuracy of LinearSVC is:', score)
+    print('The Accuracy of MLPClassifier is:', score)
     print(cr)
 
     """ 保存Model """

@@ -29,7 +29,7 @@ def remove_row(df, n_nonzero_row_list):
   return df.drop(n_nonzero_row_list)
 
 if __name__ == "__main__":
-  df = pd.read_csv(sys.argv[1], index_col='Label')
+  df = pd.read_csv(sys.argv[1], index_col='AccID')
   print(len(df.index))
   n=input('Input number of non zero number.\n')
   n_nonzero_row_list = find_n_nonzero_row(df, n)

@@ -37,16 +37,19 @@ from scipy import interp
 import matplotlib.pyplot as plt
 
 from sklearn import svm, datasets
-from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import StratifiedKFold, ShuffleSplit
+from sklearn.metrics import roc_curve, auc, accuracy_score
+from sklearn.model_selection import StratifiedKFold, ShuffleSplit, train_test_split
 
 # #############################################################################
 # Data IO and generation
 
 # Import some data to play with
-df = pd.read_csv('.\\ready2train\\trainning_data.csv', header=0)
-X = df.iloc[0:184, 1:].to_numpy()
-y = df.iloc[0:184, 0].to_numpy()
+#df = pd.read_csv('.\\ready2train\\trainning_data.csv', header=0)
+df = pd.read_csv('.\\ready2train\\jzx_data.csv', header=0)
+#X = df.iloc[0:184, 1:].to_numpy()
+X = df.iloc[0:, 1:].to_numpy()
+#y = df.iloc[0:184, 0].to_numpy()
+y = df.iloc[0:, 0].to_numpy()
 #X, y = X[y != 2], y[y != 2]
 n_samples, n_features = X.shape
 
@@ -59,48 +62,65 @@ random_state = np.random.RandomState(0)
 
 # Run classifier with cross-validation and plot ROC curves
 #cv = StratifiedKFold(n_splits=6)
-cv = ShuffleSplit(n_splits=4, test_size=0.3)
+#cv = ShuffleSplit(n_splits=3, test_size=0.3)
 classifier = svm.SVC(kernel='linear', probability=True,
                      random_state=random_state)
 
 tprs = []
 aucs = []
+accs = []
 mean_fpr = np.linspace(0, 1, 100)
 
-i = 0
-for train, test in cv.split(X, y):
-  probas_ = classifier.fit(X[train], y[train]).predict_proba(X[test])
-  # Compute ROC curve and area the curve
-  fpr, tpr, thresholds = roc_curve(y[test], probas_[:, 1])
-  tprs.append(interp(mean_fpr, fpr, tpr))
-  tprs[-1][0] = 0.0
-  roc_auc = auc(fpr, tpr)
-  aucs.append(roc_auc)
-  plt.plot(fpr, tpr, lw=2, alpha=.8,
-            label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
+plt.figure(figsize=(4.65, 4.1))
+plt.plot(1, 1, lw=0, alpha=.8, label='Genes: 27544   n      Acc.     AUC')
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.5,
+                                                    random_state=0)
+clf = classifier.fit(X_train, y_train)
 
-  i += 1
-#plt.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
-#          label='Chance', alpha=.8)
+# #############################################################################
+# Training
+acc = accuracy_score(y_train, clf.predict(X_train))
+probas_ = clf.predict_proba(X_train)
+# Compute ROC curve and area the curve
+fpr, tpr, thresholds = roc_curve(y_train, probas_[:, 1])
+tprs.append(interp(mean_fpr, fpr, tpr))
+tprs[-1][0] = 0.0
+roc_auc = auc(fpr, tpr)
+aucs.append(roc_auc)
+accs.append(acc)
+plt.plot(fpr*100, tpr*100, lw=2, alpha=.7, linestyle='--', color='grey',
+          label='         Training   152  %d%%  %0.2f' % (acc*100, roc_auc))
+          #label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
 
+# #############################################################################
+# Evaluation
+acc = accuracy_score(y_test, clf.predict(X_test))
+probas_ = clf.predict_proba(X_test)
+# Compute ROC curve and area the curve
+fpr, tpr, thresholds = roc_curve(y_test, probas_[:, 1])
+tprs.append(interp(mean_fpr, fpr, tpr))
+tprs[-1][0] = 0.0
+roc_auc = auc(fpr, tpr)
+aucs.append(roc_auc)
+accs.append(acc)
+plt.plot(fpr*100, tpr*100, lw=2, alpha=.8,
+          label='     Evaluation   66    %d%%    %0.2f' % (acc*100, roc_auc))
+          #label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
+
+# #############################################################################
+# Validation
 mean_tpr = np.mean(tprs, axis=0)
 mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
 std_auc = np.std(aucs)
-#plt.plot(mean_fpr, mean_tpr, color='b',
-#         label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc),
-#         lw=2, alpha=.8)
+plt.plot(mean_fpr*100, mean_tpr*100, color='b',
+         label='      Validation   218  %d%%    %0.2f' % (sum(accs)/len(accs)*100, mean_auc),
+         lw=2, alpha=.8)
 
-std_tpr = np.std(tprs, axis=0)
-tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
-tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2,
-                 label=r'$\pm$ 1 std. dev.')
-
-plt.xlim([-0.05, 1.05])
-plt.ylim([-0.05, 1.05])
-plt.xlabel('1 - Specificity')
-plt.ylabel('Sensitivity')
-plt.title('Receiver operating characteristic example')
+plt.xlim([-5, 105])
+plt.ylim([-5, 105])
+plt.xlabel('100% - Specificity (%)')
+plt.ylabel('Sensitivity (%)')
+#plt.title('Receiver operating characteristic example')
 plt.legend(loc="lower right")
 plt.show()

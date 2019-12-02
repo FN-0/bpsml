@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 
 def merge_2_df(e1, e2):
-  return e1.merge(e2, on='Mark', how='left')
+  return e1.merge(e2, on='AccID', how='left')
 
 if __name__ == "__main__":
   df1 = pd.read_csv(sys.argv[1])

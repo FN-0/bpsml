@@ -48,13 +48,13 @@ if __name__ == "__main__":
   src = read_gid_from_file(fsrc)
   dst = read_gid_from_file(fdst)
   print(len(src), len(dst))
-  #input()
-  of_name = make_outfile_name(fsrc, fdst)
-  of1 = open(of_name, 'w')
-  of2 = open('missing_gene_id.txt', 'w')
   rst = get_difference(src, dst)
-  for r in rst:
-    of1.write(r[0]+','+r[1]+'\n')
-    of2.write(r[0]+'\n')
+  if rst:
+    of_name = make_outfile_name(fsrc, fdst)
+    of1 = open(of_name, 'w')
+    of2 = open('missing_gene_id.txt', 'w')
+    for r in rst:
+      of1.write(r[0]+','+r[1]+'\n')
+      of2.write(r[0]+'\n')
   print('Done.')
   

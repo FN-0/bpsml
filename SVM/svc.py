@@ -3,6 +3,7 @@
 
 import sys
 import pickle
+import datetime
 import numpy as np
 import pandas as pd
 from sklearn import svm
@@ -34,9 +35,9 @@ def main():
     """ 保存Model """
     is_save = input('Sava this model? y/n ')
     if is_save == 'y':
-      with open('save/lsvc_2classes_'+str(score)+'.pickle', 'wb') as f:
+      with open('save/svc_'+datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'.pickle', 'wb') as f:
         pickle.dump(lsvc, f)
-      with open('save/lsvc_2classes_'+str(score)+'.txt', 'w') as f:
+      with open('save/svc_'+datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+'.txt', 'w') as f:
         f.write(cr)
     elif is_save == 'n':
       pass

@@ -6,9 +6,9 @@ import sys
 import json
 import pickle
 from collections import Counter
-from check_input_data import check_gene_id, check_data, is_csv_or_excl
-from check_input_data import locate_genes_and_data_pos, take_selected_data
-from check_input_data import read_data, read_gene_from_file, data_transposer
+from SVM.check_input_data import check_gene_id, check_data, is_csv_or_excl
+from SVM.check_input_data import locate_genes_and_data_pos, take_selected_data
+from SVM.check_input_data import read_data, read_gene_from_file, data_transposer
 
 def check_input():
   df_data_pos_types = [

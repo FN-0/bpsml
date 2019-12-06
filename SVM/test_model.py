@@ -3,49 +3,68 @@
 
 import os
 import sys
+import json
 import pickle
-import numpy as np
-from sklearn.metrics import classification_report
-from check_input_data import data_transposer
-from check_input_data import read_data, read_gene_from_file
+from collections import Counter
 from check_input_data import check_gene_id, check_data, is_csv_or_excl
 from check_input_data import locate_genes_and_data_pos, take_selected_data
+from check_input_data import read_data, read_gene_from_file, data_transposer
 
 def check_input():
   df_data_pos_types = [
-    'left_without_header',
-    'top_without_header',
-    'left_with_header',
-    'top_with_header'
+    'gene_at_left_without_header',
+    'gene_at_top_without_header',
+    'gene_at_left_with_header',
+    'gene_at_top_with_header'
   ]
   ftype = is_csv_or_excl(sys.argv[1])
   df = read_data(ftype)
-  file_path = '.\SVM\Std_gene_id.txt'
-  if os.path.exists(file_path):
+  file_path = 'SVM/data/Std_gene_id.txt'
+  check_data_file = os.path.exists(file_path)
+  if not df.empty and check_data_file:
     with open(file_path, 'r') as fsgenes:
       std_genes = read_gene_from_file(fsgenes)
-      if str(df):
-        df_data_pos_type = locate_genes_and_data_pos(df, df_data_pos_types)
-        df_type = df_data_pos_types.index(df_data_pos_type)
-        gid_index = check_gene_id(df, std_genes, df_type)
-        data_list = check_data(df, df_type)
-        if gid_index and data_list:
-          selected = take_selected_data(data_list, gid_index, std_genes)
-          return data_transposer(df_type, selected)
-        else:
-          print('illegal value.')
+      df_data_pos_type = locate_genes_and_data_pos(df, df_data_pos_types)
+      df_type = df_data_pos_types.index(df_data_pos_type)
+      #print(df_type)
+      gid_index = check_gene_id(df, std_genes, df_type)
+      (data_list, header) = check_data(df, df_type)
+      if gid_index and data_list:
+        selected = take_selected_data(df_type, data_list, gid_index)
+        return (data_transposer(selected), header)
+      else:
+        print('illegal value.')
   else:
-    print(file_path+' does not exist.')
+    if not check_data_file:
+      print(file_path+' does not exist.')
+
+def make_report(y_predict):
+  pass
 
 def main():
-  input_data = check_input()
+  try:
+    (input_data, header) = check_input()
+  except TypeError as err:
+    print(err)
+    return
 
   """ 读取Model """
   with open('save/svc_20191202_111229.pickle', 'rb') as f:
-      clf2 = pickle.load(f)
+      clf = pickle.load(f)
       #测试读取后的Model
-      y_predict = clf2.predict(input_data)
-      print(y_predict)
+      y_predict = clf.predict(input_data)
+        
+      if header:
+        out = dict(zip(header, y_predict))
+      else:
+        out = dict(zip([x for x in range(0, len(y_predict))], y_predict))
+
+      jsonout = json.dumps(out, ensure_ascii=False)
+      print(jsonout)
+      
+      count = Counter(y_predict)
+      for c in count:
+        print(c, count[c])
 
 if __name__ == "__main__":
   main()

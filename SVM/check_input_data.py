@@ -32,15 +32,18 @@ def check_gene_id(df, std_genes, df_type):
 """ 检查数据格式
 """
 def check_data(df, df_type):
+  header = None
   if df_type == 0:
     data = df.iloc[:, 1:].values.tolist()
   elif df_type == 1:
     data = df.iloc[1:, :].values.tolist()
   elif df_type == 2:
     data = df.iloc[1:, 1:].values.tolist()
+    header = df.iloc[0, 1:].to_list()
   elif df_type == 3:
     data = df.iloc[1:, 1:].values.tolist()
-  
+    header = df.iloc[1:, 0].to_list()
+
   for row in data:
     for e in row:
       if not isinstance(e, numbers.Number):
@@ -48,23 +51,22 @@ def check_data(df, df_type):
           row[row.index(e)] = ast.literal_eval(e)
         except ValueError as err:
           print('文件内出现非数字字符' ,err)
-          return False
+          return (False, header)
     else:
-      return data
+      return (data, header)
 
 """ 从通过检查的数据中获取需要的数据
 """
-def take_selected_data(data_list, gid_index, std_genes):
+def take_selected_data(df_type, data_list, gid_index):
   selected = []
+  if df_type == 1 or df_type == 3:
+    data_list = data_transposer(data_list)
   for index in gid_index:
     selected.append(data_list[index])
   return selected
 
-def data_transposer(df_type, data_list):
-  if df_type == 0 or df_type == 2:
-    return list(map(list, zip(*data_list)))
-  else:
-    return data_list
+def data_transposer(data_list):
+  return list(map(list, zip(*data_list)))
 
 
 """ 检查基因列表是否重复
@@ -95,8 +97,9 @@ def read_data(ftype):
     else:
       print('文件格式错误')
     return df
-  except Exception as exc:
-    print('文件数据读取错误', exc)
+  except Exception as err:
+    print('文件数据读取错误', err)
+    return pd.DataFrame()
 
 def is_gene_id(s):
   return len(s) == 15 and (s[0:4].lower() == 'ensg')
@@ -140,7 +143,7 @@ def main():
   ]
   ftype = is_csv_or_excl(sys.argv[1])
   df = read_data(ftype)
-  file_path = '.\SVM\Std_gene_id.txt'
+  file_path = '.\SVM\data\Std_gene_id.txt'
   if os.path.exists(file_path):
     with open(file_path, 'r') as fsgenes:
       std_genes = read_gene_from_file(fsgenes)

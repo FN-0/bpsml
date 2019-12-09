@@ -15,19 +15,18 @@ import pandas as pd
 def check_gene_id(df, std_genes, df_type):
   gid_lst = get_gene_id(df, df_type)
   if check_duplicates(gid_lst):
-    print('存在重复基因')
-    return False
+    return (False, 4, '存在重复基因')
   if gid_lst:
     index = []
     for sg in std_genes:
       if sg not in gid_lst:
-        return False
+        return (False, 5, '缺少必须基因')
       else:
         index.append(gid_lst.index(sg))
     else:
-      return index
+      return (index, 0, '成功')
   else:
-    return False
+    return (False, 6, '读取基因列表错误，可能存在非基因字符串')
 
 """ 检查数据格式
 """
@@ -50,10 +49,9 @@ def check_data(df, df_type):
         try:
           row[row.index(e)] = ast.literal_eval(e)
         except ValueError as err:
-          print('文件内出现非数字字符' ,err)
-          return (False, header)
+          return (False, header, 3, '文件内出现英文字符: '+str(err))
     else:
-      return (data, header)
+      return (data, header,  0, '成功')
 
 """ 从通过检查的数据中获取需要的数据
 """
@@ -72,7 +70,11 @@ def data_transposer(data_list):
 """ 检查基因列表是否重复
 """
 def check_duplicates(lst):
-  return len(lst) != len(set(lst))
+  try:
+    is_dup = len(lst) != len(set(lst))
+    return is_dup
+  except:
+    return False
 
 def read_gene_from_file(f):
   gene_lst = []
@@ -95,14 +97,17 @@ def read_data(ftype):
     elif ftype.lower() == 'xls':
       df = pd.read_excel(sys.argv[1], header=None)
     else:
-      print('文件格式错误')
-    return df
+      return (pd.DataFrame(), 1, '文件格式错误，仅支持"csv"、"xlsx"、"xls"格式')
+    return (df, 0, '成功')
   except Exception as err:
-    print('文件数据读取错误', err)
-    return pd.DataFrame()
+    return (pd.DataFrame(), 2, '文件数据读取错误: '+str(err))
 
 def is_gene_id(s):
-  return len(s) == 15 and (s[0:4].lower() == 'ensg')
+  try:
+    s_len = len(s)
+    return (s[0:4].lower() == 'ensg') and s_len == 15
+  except:
+    return False
 
 def locate_genes_and_data_pos(df, df_types):
   first_item = df.iloc[0, 0]
@@ -136,30 +141,28 @@ def get_gene_id(df, df_type):
 
 def main():
   df_data_pos_types = [
-    'left_without_header',
-    'top_without_header',
-    'left_with_header',
-    'top_with_header'
+    'gene_at_left_without_header',
+    'gene_at_top_without_header',
+    'gene_at_left_with_header',
+    'gene_at_top_with_header'
   ]
   ftype = is_csv_or_excl(sys.argv[1])
-  df = read_data(ftype)
-  file_path = '.\SVM\data\Std_gene_id.txt'
-  if os.path.exists(file_path):
+  df, ret_code, msg = read_data(ftype)
+  file_path = 'SVM/data/Std_gene_id.txt'
+  check_data_file = os.path.exists(file_path)
+  if ret_code == 0 and check_data_file:
     with open(file_path, 'r') as fsgenes:
       std_genes = read_gene_from_file(fsgenes)
-      if str(df):
-        df_data_pos_type = locate_genes_and_data_pos(df, df_data_pos_types)
-        df_type = df_data_pos_types.index(df_data_pos_type)
-        gid_index = check_gene_id(df, std_genes, df_type)
-        data_list = check_data(df, df_type)
-        if gid_index and data_list:
-          print('All Pass.')
-          selected = take_selected_data(data_list, gid_index, std_genes)
-          return data_transposer(df_type, selected)
-        else:
-          print('illegal value.')
-  else:
-    print(file_path+' does not exist.')
+      df_data_pos_type = locate_genes_and_data_pos(df, df_data_pos_types)
+      df_type = df_data_pos_types.index(df_data_pos_type)
+      (gid_index, ret_code, msg) = check_gene_id(df, std_genes, df_type)
+      if ret_code == 0:
+        (data_list, header, ret_code, msg) = check_data(df, df_type)
+        if ret_code == 0:
+          selected = take_selected_data(df_type, data_list, gid_index)
+          return (data_transposer(selected), header, ret_code, msg)
+  
+  return (None, None, ret_code, msg)
 
 if __name__ == "__main__":
   main()

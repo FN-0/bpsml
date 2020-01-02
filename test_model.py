@@ -10,7 +10,7 @@ from SVM.check_input_data import check_gene_id, check_data, is_csv_or_excl
 from SVM.check_input_data import locate_genes_and_data_pos, take_selected_data
 from SVM.check_input_data import read_data, read_gene_from_file, data_transposer
 
-def check_input():
+def check_input(path):
   df_data_pos_types = [
     'gene_at_left_without_header',
     'gene_at_top_without_header',
@@ -29,7 +29,7 @@ def check_input():
   }
   ftype = is_csv_or_excl(sys.argv[1])
   df, ret_code, msg = read_data(ftype)
-  file_path = 'SVM/data/Std_gene_id.txt'
+  file_path = path + 'SVM/data/Std_gene_id.txt'
   check_data_file = os.path.exists(file_path)
   if ret_code == 0 and check_data_file:
     with open(file_path, 'r') as fsgenes:
@@ -38,7 +38,7 @@ def check_input():
       df_type = df_data_pos_types.index(df_data_pos_type)
       (gid_index, ret_code, msg) = check_gene_id(df, std_genes, df_type)
       if ret_code == 0:
-        (data_list, header, ret_code, msg) = check_data(df, df_type)
+        (data_list, header, ret_code, msg) = check_data(df, df_type, int(sys.argv[3]))
         if ret_code == 0:
           selected = take_selected_data(df_type, data_list, gid_index)
           return (data_transposer(selected), header, ret_code, msg)
@@ -46,8 +46,9 @@ def check_input():
   return (None, None, ret_code, msg)
 
 def main():
+  path = sys.argv[2]
   try:
-    (input_data, header, code, msg) = check_input()
+    (input_data, header, code, msg) = check_input(path)
   except TypeError as err:
     print(err)
     return
@@ -55,12 +56,15 @@ def main():
   """ 读取Model """
   jsondata = None
   if code == 0:
-    with open('save/svc_20191202_111229.pickle', 'rb') as f:
+    with open(path + 'save/svc_20191210_112808.pickle', 'rb') as f:
         clf = pickle.load(f)
         #测试读取后的Model
         y_predict = clf.predict(input_data)
           
         if header:
+          for e in header:
+            header[header.index(e)] = str(e)
+
           data = dict(zip(header, y_predict))
         else:
           data = dict(zip([x for x in range(0, len(y_predict))], y_predict))

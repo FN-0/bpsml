@@ -30,18 +30,18 @@ def check_gene_id(df, std_genes, df_type):
 
 """ 检查数据格式
 """
-def check_data(df, df_type):
+def check_data(df, df_type, n):
   header = None
   if df_type == 0:
-    data = df.iloc[:, 1:].values.tolist()
+    data = df.iloc[:, 1:n+1].values.tolist()
   elif df_type == 1:
-    data = df.iloc[1:, :].values.tolist()
+    data = df.iloc[1:n+1, :].values.tolist()
   elif df_type == 2:
-    data = df.iloc[1:, 1:].values.tolist()
-    header = df.iloc[0, 1:].to_list()
+    data = df.iloc[1:, 1:n+1].values.tolist()
+    header = df.iloc[0, 1:n+1].to_list()
   elif df_type == 3:
-    data = df.iloc[1:, 1:].values.tolist()
-    header = df.iloc[1:, 0].to_list()
+    data = df.iloc[1:n+1, 1:].values.tolist()
+    header = df.iloc[1:n+1, 0].to_list()
 
   for row in data:
     for e in row:

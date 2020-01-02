@@ -15,7 +15,7 @@ def transpose(filenames):
     outfile_name = '_transpose.'.join(filename.split('.'))
     outfile_names.append(outfile_name)
     df_t = df.T
-    df_t.to_csv(outfile_name, header=None)
+    df_t.to_csv(outfile_name, encoding="utf-8", header=None)
   return outfile_names
 
 if __name__ == "__main__":

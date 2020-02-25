@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 
 def get_gene_id(filename):
-  df = pd.read_csv(filename, header=0)
+  df = pd.read_csv(filename, header=0, encoding='utf-8')
   gene_id = df.iloc[:, 0]
   return gene_id
 

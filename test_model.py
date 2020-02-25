@@ -57,20 +57,26 @@ def main():
   jsondata = None
   if code == 0:
     with open(path + 'save/svc_20191210_112808.pickle', 'rb') as f:
-        clf = pickle.load(f)
-        #测试读取后的Model
-        y_predict = clf.predict(input_data)
-          
-        if header:
-          for e in header:
-            header[header.index(e)] = str(e)
+      clf = pickle.load(f)
+      #测试读取后的Model
+      y_predict = clf.predict(input_data)
 
-          data = dict(zip(header, y_predict))
-        else:
-          data = dict(zip([x for x in range(0, len(y_predict))], y_predict))
+      y_list = ('易出血', '无偏向', '易血栓')
+      y_result = ('出血风险高，血栓风险低', '出血风险低，血栓风险低', '出血风险低，血栓风险高')
+      y_predict = [y_result[0] if x == y_list[0] else x for x in y_predict]
+      y_predict = [y_result[1] if x == y_list[1] else x for x in y_predict]
+      y_predict = [y_result[2] if x == y_list[2] else x for x in y_predict]
 
-        jsondata = json.dumps(data, ensure_ascii=False)
-        #print(jsondata)
+      if header:
+        for e in header:
+          header[header.index(e)] = str(e)
+
+        data = dict(zip(header, y_predict))
+      else:
+        data = dict(zip([x for x in range(0, len(y_predict))], y_predict))
+
+      jsondata = json.dumps(data, ensure_ascii=False)
+      #print(jsondata)
       
   """ json构成 """
   jdict = {"code": code, "msg": msg, "data": jsondata}

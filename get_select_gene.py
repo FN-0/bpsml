@@ -13,6 +13,6 @@ if __name__ == "__main__":
   f = open(sys.argv[2], 'r')
   gene_lst = []
   for gid in f.readlines():
-    gene_lst.append(gid.strip('\n'))
+    gene_lst.append(gid.strip('\n').strip('\t'))
   df = get_select_gene(df, gene_lst)
   df.to_csv(os.path.basename(sys.argv[1]).split('.')[0]+'_.csv')

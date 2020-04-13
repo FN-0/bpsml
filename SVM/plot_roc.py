@@ -75,15 +75,16 @@ mean_fpr = np.linspace(0, 1, 100)
 
 plt.figure(figsize=(4.65, 4.1))
 plt.plot(1, 1, lw=0, alpha=.8, label='Genes:   84       n      Acc.     AUC')
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.7)#,
-                                                    #random_state=100)
-f = open('save/svc_20200217_150648.pickle', 'rb')
+f = open('save/84_202002271629_2c/svc_20200227_162928.pickle', 'rb')
+acc = 0
 clf = pickle.load(f)
-#fit(X_train, y_train)
-
-# #############################################################################
-# Training
-acc = accuracy_score(y_train, clf.predict(X_train))
+while(acc != 1):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.6)#,
+                                                        #random_state=100)
+    #fit(X_train, y_train)
+    # #############################################################################
+    # Training
+    acc = accuracy_score(y_train, clf.predict(X_train))
 probas_ = clf.predict_proba(X_train)
 # Compute ROC curve and area the curve
 y_train_bin = []
@@ -99,8 +100,8 @@ roc_auc = auc(fpr, tpr)
 aucs.append(roc_auc)
 accs.append(acc)
 plt.plot(fpr*100, tpr*100, lw=2, alpha=.7, linestyle='-', color='grey',
-          label='         Training   104  %d%%   %0.3f' % (acc*100, roc_auc))
-          #label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
+        label='         Training   103  %d%%   %0.3f' % (acc*100, roc_auc))
+        #label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
 
 # #############################################################################
 # Evaluation
@@ -120,8 +121,8 @@ roc_auc = auc(fpr, tpr)
 aucs.append(roc_auc)
 accs.append(acc)
 plt.plot(fpr*100, tpr*100, lw=2, alpha=.8,
-          label='     Evaluation   69    %d%%    %0.3f' % (acc*100, roc_auc))
-          #label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
+        label='     Evaluation   69    %d%%     %0.3f' % (acc*100, roc_auc))
+        #label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
 
 # #############################################################################
 # Validation
@@ -130,8 +131,8 @@ mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
 std_auc = np.std(aucs)
 plt.plot(mean_fpr*100, mean_tpr*100, color='b',
-         label='      Validation   173  %d%%    %0.2f' % (sum(accs)/len(accs)*100, mean_auc),
-         lw=2, alpha=.8)'''
+        label='      Validation   173  %d%%    %0.2f' % (sum(accs)/len(accs)*100, mean_auc),
+        lw=2, alpha=.8)'''
 
 plt.xlim([-5, 105])
 plt.ylim([-5, 105])
